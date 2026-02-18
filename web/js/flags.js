@@ -1,9 +1,10 @@
 import { config } from "./config.js";
 
 export class FlagsBouncer {
-  constructor(canvas) {
+  constructor(canvas, background) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
+    this.background = background;
     this.text = "Flags!";
     this.speed = config.speed;
     this.textSize = config.textSize;
@@ -26,6 +27,7 @@ export class FlagsBouncer {
 
   resize() {
     this.#refreshMetrics();
+    this.background?.resize();
     this.position.x = Math.min(this.position.x, this.#boundsWidth() - this.metrics.width);
     this.position.y = Math.min(this.position.y, this.#boundsHeight());
     this.position.x = Math.max(0, this.position.x);
@@ -49,7 +51,7 @@ export class FlagsBouncer {
       const deltaSeconds = (time - this.lastTime) / 1000;
       this.lastTime = time;
       this.#update(deltaSeconds);
-      this.#render();
+      this.#render(time / 1000);
       this.animationFrame = window.requestAnimationFrame(frame);
     };
 
@@ -81,8 +83,14 @@ export class FlagsBouncer {
     }
   }
 
-  #render() {
-    this.ctx.clearRect(0, 0, this.#boundsWidth(), this.#boundsHeight());
+  #render(elapsedSeconds) {
+    if (this.background) {
+      this.background.render(this.ctx, elapsedSeconds);
+    } else {
+      this.ctx.fillStyle = "#0f1118";
+      this.ctx.fillRect(0, 0, this.#boundsWidth(), this.#boundsHeight());
+    }
+
     this.ctx.font = `${this.textSize}px ${this.fontFamily}`;
     this.ctx.fillStyle = this.color;
     this.ctx.textBaseline = "alphabetic";

@@ -1,5 +1,8 @@
 # Static Web + Rust/WASM GitHub Pages Template
 
+> **GitHub Pages URL (template-safe):** `https://<owner>.github.io/<repo>/`  
+> Replace `<owner>` with your GitHub username or organization, and `<repo>` with the repository name created from this template.
+
 A minimal template for creating many small static web projects with:
 
 - Vanilla JavaScript (ES modules)
@@ -78,7 +81,9 @@ The Rust crate exports:
 pub fn add(a: i32, b: i32) -> i32
 ```
 
-`web/js/main.js` initializes the generated wasm module and calls `add(1, 2)` so browser runtime integration is validated.
+and a `NoiseField` renderer that generates animated simplex-noise RGBA frames in optimized wasm for the canvas background.
+
+`web/js/main.js` initializes the generated wasm module, calls `add(1, 2)`, and uses the wasm noise renderer for the demo background when available.
 
 ## GitHub Pages deployment
 
@@ -91,10 +96,16 @@ Deployment is defined in `.github/workflows/pages.yml`:
 
 No `gh-pages` branch is required. Configure repository settings to use **Pages → Source: GitHub Actions**.
 
+Expected site URL after deploy:
+
+- User/org site repo: `https://<owner>.github.io/` (only when repository name is exactly `<owner>.github.io`)
+- Project site repo (most template uses): `https://<owner>.github.io/<repo>/`
+
 ## Demo behavior
 
 The default template demo renders a full-window canvas where:
 
+- Animated simplex-noise background runs behind the text (wasm renderer in production builds)
 - `Flags!` bounces within the viewport with delta-time animation
 - Clicking/tapping anywhere changes the text color randomly
 - Resize/orientation changes are handled

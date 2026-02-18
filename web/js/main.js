@@ -1,5 +1,6 @@
-import init, { add } from "../wasm/wasm_core.js";
+import init, * as wasm from "../wasm/wasm_core.js";
 import { FlagsBouncer } from "./flags.js";
+import { NoiseBackground } from "./noise.js";
 
 const canvas = document.getElementById("app-canvas");
 const context = canvas.getContext("2d");
@@ -22,10 +23,13 @@ async function main() {
   resizeCanvas();
 
   await init();
-  const sum = add(1, 2);
+  const sum = wasm.add(1, 2);
   console.info(`wasm add(1, 2) = ${sum}`);
 
-  const bouncer = new FlagsBouncer(canvas);
+  const noiseBackground = new NoiseBackground(canvas, wasm);
+  noiseBackground.resize();
+
+  const bouncer = new FlagsBouncer(canvas, noiseBackground);
   bouncer.start();
 
   window.addEventListener("resize", () => {
